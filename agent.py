@@ -57,5 +57,14 @@ def call_llm(prompt: str, system: str = "You are a helpful assistant. Reply with
     except requests.RequestException as e:
         return {"ok": False, "text": None, "raw": None, "status": -1, "error": str(e), "headers": {}}
 
+def solve_simple(input_text: str) -> str:
+    #Tells the LLM to only giove the answer without any explanation
+    prompt = ("Answer the following question and respond with only the final answer: " + input_text)
+    result = call_llm(prompt)
+    #checks if the call was successful and returns the answer
+    if result["ok"]:
+        return (result["text"] or "").strip()
+    return ""
+
 
 
