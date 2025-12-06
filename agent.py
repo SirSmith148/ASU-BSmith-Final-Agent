@@ -88,7 +88,18 @@ def solve_with_self_consistency(input_text: str, num_samples: int = 5) -> str:
     best_answer = max(dulplicates, key=dulplicates.get)
     return best_answer
 
-
+def solve_with_reflection(input_text: str) -> str:
+    #Runs solve simple to get an initial answer
+    initial_answer = solve_simple(input_text)
+    #prompts the LLM to check if the answer it generated first was correct and if not then correct it
+    prompt = ("Question: " + input_text + "\n"
+              "Provided Answer: " + initial_answer + "\n"
+              "Please check if this answer is correct. If the answer is correct then respons with the same answer. If the answer is NOT correct, provide the corrected answer. Respond with only the final answer.")
+    result = call_llm(prompt)
+    #checks if the call was successful and returns the answer
+    if result["ok"]:
+        return (result["text"] or "").strip()
+    return ""
 
 
 
