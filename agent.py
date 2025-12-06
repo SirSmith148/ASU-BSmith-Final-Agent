@@ -66,5 +66,29 @@ def solve_simple(input_text: str) -> str:
         return (result["text"] or "").strip()
     return ""
 
+def solve_with_self_consistency(input_text: str, num_samples: int = 5) -> str:
+    #creates an answer array for all the answers the LLM will generate
+    answers = []
+    #generates multiple answers based on input, and stores them in the array
+    for _ in range(num_samples):
+        prompt = ("Answer the following question and respond with only the final answer: " + input_text)
+        #calls the LLM with higher temperature to increase answer variability
+        result = call_llm(prompt, temperature=0.5)
+        #checks if the call was successful and stores the answer
+        if result["ok"]:
+            answer = (result["text"] or "").strip()
+            answers.append(answer)
+    if not answers:
+        return ""
+    #counts the frequency of each answer
+    dulplicates = {}
+    for answer in answers:
+        dulplicates[answer] = dulplicates.get(answer, 0) + 1
+    #slects the answer that was generated the most and returns it
+    best_answer = max(dulplicates, key=dulplicates.get)
+    return best_answer
+
+
+
 
 
